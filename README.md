@@ -1,2 +1,2 @@
-# soft_event_frame_alignment
+# Soft Event-Frame Alignment
 The repo for the paper Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation
