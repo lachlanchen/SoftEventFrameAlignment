@@ -1,39 +1,74 @@
 [English](../README.md) · [العربية](README.ar.md) · [Español](README.es.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Tiếng Việt](README.vi.md) · [中文 (简体)](README.zh-Hans.md) · [中文（繁體）](README.zh-Hant.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
 
+[![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
+
 # Soft Event-Frame Alignment
 
-> Репозиторий к статье **Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation**.
+> Репозиторий для статьи **Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation**.
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)
-![CUDA](https://img.shields.io/badge/CUDA-Optional-76B900?logo=nvidia&logoColor=white)
-![Research Code](https://img.shields.io/badge/Type-Research%20Code-0A7EA4)
-![License](https://img.shields.io/badge/License-Apache%202.0-2EA043)
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white&style=flat-square)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white&style=flat-square)
+![CUDA](https://img.shields.io/badge/CUDA-Optional-76B900?logo=nvidia&logoColor=white&style=flat-square)
+![Research Code](https://img.shields.io/badge/Type-Research%20Code-0A7EA4?style=flat-square)
+![License](https://img.shields.io/badge/License-Apache%202.0-2EA043?style=flat-square)
+
+| Фокус | Подробности |
+| --- | --- |
+| 🎯 Цель | Выравнивание потоков с камер событий и камер кадра с помощью единой неявной нейронной модели |
+| ⚙️ Основной конвейер | `main.py` (обучение) + `evaluation.py` (анализ/визуализация) |
+| 🧪 Скрипты вариантов | `event_inn.py`, `frame_inn.py`, `event_deri*.py`, `event_inn_sparse.py` |
+
+</div>
+
+## Оглавление
+
+- [🔎 Обзор](#-обзор)
+- [✨ Особенности](#-особенности)
+- [🗂️ Структура проекта](#-структура-проекта)
+- [📋 Предварительные требования](#-предварительные-требования)
+- [⚙️ Установка](#-установка)
+- [🚀 Быстрый старт](#-быстрый-старт)
+- [🧪 Использование](#-использование)
+- [🧩 Примечания по настройке](#-примечания-по-настройке)
+- [🧠 Математическая формулировка](#-математическая-формулировка)
+- [🧾 Примеры](#-примеры)
+- [🛠️ Заметки для разработки](#-заметки-для-разработки)
+- [🧯 Устранение неполадок](#-устранение-неполадок)
+- [🗺️ План развития](#-план-развития)
+- [🤝 Вклад](#-вклад)
+- [❤️ Support](#-support)
+- [📄 Лицензия](#-лицензия)
 
 ## 🔎 Обзор
 
-Этот репозиторий содержит исследовательский код для выравнивания потоков event-камеры и frame-камеры с использованием единого неявного нейронного представления (INR/INN).
+Этот репозиторий содержит исследовательский код для выравнивания потоков камер событий и потоков камерных кадров с помощью единого неявного нейронного представления (INR/INN).
 
-### Основной пайплайн (канонический путь)
+### Основной конвейер (канонический путь)
 
 | Шаг | Компонент | Назначение |
 |---|---|---|
-| 1 | `softalign/data_processing.py` | Чтение AEDAT4-потоков, нормализация данных, создание точечных сэмплов |
-| 2 | `softalign/implicit_model.py` | Определение общей неявной функции + обучаемых параметров выравнивания |
-| 3 | `softalign/training.py` + `main.py` | Совместная оптимизация реконструкции event/frame |
-| 4 | `evaluation.py` | Визуализация выравнивания и отчёт по лоссам |
+| 1 | `softalign/data_processing.py` | Чтение потоков AEDAT4, нормализация данных, создание выборки точек |
+| 2 | `softalign/implicit_model.py` | Определение общей неявной функции и обучаемых параметров выравнивания |
+| 3 | `softalign/training.py` + `main.py` | Совместная оптимизация реконструкции событий и кадров |
+| 4 | `evaluation.py` | Визуализация выравнивания и вывод потерь |
 
-Помимо основного пути, репозиторий включает отдельные и экспериментальные скрипты для вариантов INR: только events, только frames, sparse и derivative-based.
+Помимо основного пути репозиторий включает отдельные и экспериментальные скрипты для вариантов INR, работающих только с событиями, только с кадрами, с разреженным представлением и на основе производной.
 
-## ✨ Возможности
+## ✨ Особенности
 
-- Выравнивание event-frame с обучаемыми параметрами аффинного типа: `scale`, `shift_x`, `shift_y`, `shift_t`.
-- Общая неявная функция `F(x, y, t)`, используемая и event-, и frame-веткой.
-- Моделирование events через конечную разность по времени с обучаемыми `threshold` и `dt`.
-- Загрузка AEDAT4 (`dv_processing`) и workflows с обработанными `.npy`.
-- Встроенная визуализация кривых лосса, эволюции параметров и оверлеев выравнивания.
-- Поддержка CUDA при наличии (`torch.cuda.is_available()` с fallback на CPU).
+- Выравнивание события и кадра с обучаемыми параметрами в стиле аффинного преобразования: `scale`, `shift_x`, `shift_y`, `shift_t`.
+- Общая неявная функция `F(x, y, t)`, используемая обоими ответвлениями: событием и кадром.
+- Моделирование события через конечно-разностную временную производную с обучаемыми `threshold` и `dt`.
+- Загрузка AEDAT4 (`dv_processing`) и конвейеры обработки `.npy`.
+- Встроенная визуализация для кривых ошибки, эволюции параметров и наложений выравнивания.
+- Поддержка CUDA при наличии (`torch.cuda.is_available()`, иначе CPU).
+- Скрипты для быстрого просмотра данных и легкой отладки:
+  - `read_events.py`
+  - `read_frames.py`
+  - `reader.py`, `reader_norm.py`, `simple_count.py`
 
 ## 🗂️ Структура проекта
 
@@ -41,39 +76,47 @@
 SoftEventFrameAlignment/
 ├── README.md
 ├── LICENSE
-├── main.py                          # Каноническая точка входа для обучения event-frame
-├── evaluation.py                    # Каноническая точка входа для оценки/визуализации
+├── main.py                              # Основная точка входа в обучение event-frame
+├── evaluation.py                        # Основная точка входа для оценки/визуализации
 ├── softalign/
 │   ├── __init__.py
-│   ├── data_processing.py           # Загрузка AEDAT4 + нормализация + сэмплирование точек кадров
-│   ├── implicit_model.py            # MLP + параметры выравнивания
-│   └── training.py                  # Обёртка датасета + цикл оптимизации
-├── event_inn.py                     # Эксперимент INR только для events
-├── frame_inn.py                     # Эксперимент INR только для frames
-├── event_deri.py                    # Вариант events на derivative/log-derivative
-├── event_deri_2.py                  # Вариант derivative с дополнительной нулевой регуляризацией
-├── event_inn_sparse.py              # Sparse event INR (зависимости PyG/torch_scatter)
-├── softalign_standalone.py          # Монолитный all-in-one workflow выравнивания
-├── data/                            # Обработанные массивы (сгенерированные или закоммиченные)
-├── checkpoints/                     # Основные чекпоинты обучения и графики
-├── event_inn_results/               # Сгенерированные результаты экспериментов
-├── frame_inn_results/               # Сгенерированные результаты экспериментов
-├── event_drivative_results/         # Сгенерированные результаты экспериментов
-├── alignment_results_*/             # Запуски выравнивания с timestamp
-├── yuqing/                          # Примерные файлы AEDAT4
-└── i18n/                            # Папка для файлов перевода
+│   ├── data_processing.py               # Загрузка AEDAT4 + нормализация + семплинг точек кадров
+│   ├── implicit_model.py                # MLP + параметры выравнивания
+│   └── training.py                      # Обёртка датасета + цикл оптимизации
+├── event_inn.py                         # Эксперимент INR только для событий
+├── frame_inn.py                         # Эксперимент INR только для кадров
+├── event_deri.py                        # Производный/логарифмический вариант событий
+├── event_deri_2.py                      # Вариант производной с дополнительной нулевой регуляризацией
+├── event_inn_sparse.py                  # Разреженный INR для событий (зависимости PyG/torch_scatter)
+├── softalign_standalone.py              # Монолитный однофайловый рабочий процесс выравнивания
+├── softalign_old.py                     # Устаревшая реализация, оставленная для сравнения
+├── read_events.py                       # Работа с событиями и базовые проверки предобработки
+├── read_frames.py                       # Извлечение кадров/видео и проверка форм
+├── reader.py                            # Утилита чтения AEDAT
+├── reader_norm.py                       # Чтение с утилитами нормализации
+├── simple_count.py                      # Лёгкая утилита подсчёта событий
+├── data/                                # Обработанные массивы (сгенерированные или добавленные в репозиторий)
+├── checkpoints/                         # Основные контрольные точки и графики
+├── event_inn_results/                   # Сгенерированные результаты экспериментов
+├── frame_inn_results/                   # Сгенерированные результаты экспериментов
+├── event_derivative_results/             # Сгенерированные результаты экспериментов
+├── alignment_results_*/                 # Запуски выравнивания с меткой времени
+├── yuqing/                              # Примеры AEDAT4 файлов
+├── events_processed.csv                  # Артефакт сводки событий
+├── frames_processed.csv                  # Артефакт сводки кадров
+└── i18n/                                # Переведённые файлы README
 ```
 
 ## 📋 Предварительные требования
 
 - Рекомендуется Python 3.10+.
-- Ниже приведены примеры для Linux/macOS shell (при необходимости адаптируйте для Windows).
-- Опционально, но рекомендуется: GPU с CUDA для ускорения обучения.
+- Ниже примеры для оболочки Linux/macOS (при необходимости адаптируйте под Windows).
+- Опционально, но желательно: GPU с поддержкой CUDA для ускорения обучения.
 - Для чтения AEDAT4 требуется `dv_processing` и совместимые системные зависимости.
 
 ## ⚙️ Установка
 
-Сейчас в репозитории нет `requirements.txt` или `pyproject.toml`, поэтому зависимости устанавливаются вручную.
+На данный момент отсутствуют `requirements.txt` или `pyproject.toml`, поэтому зависимости нужно устанавливать вручную.
 
 ```bash
 python -m venv .venv
@@ -84,11 +127,13 @@ pip install numpy scipy matplotlib opencv-python tqdm torch
 pip install dv-processing
 ```
 
-Опциональные зависимости для sparse-экспериментов (`event_inn_sparse.py`):
+Дополнительные зависимости для разреженных экспериментов (`event_inn_sparse.py`):
 
 ```bash
 pip install scikit-learn torch-geometric torch-scatter
 ```
+
+Предположение: доступность CUDA определяет поведение устройства по умолчанию, но все команды ниже также поддерживают явный `--device cpu`.
 
 ## 🚀 Быстрый старт
 
@@ -107,9 +152,9 @@ python main.py \
 - `data/` (`events.npy`, `frames_timestamps.npy`, `frame_points.npy`, `sample_frame.png`)
 - `checkpoints/` (`model_epoch_*.pt`, `model_final.pt`, `loss_curves.png`, `parameter_history.png`)
 
-### 2. Оценка обученного чекпоинта
+### 2. Оценка обученного контрольного состояния
 
-`evaluation.py` импортирует `EventFrameAlignmentModel` через `from implicit_model import ...`, тогда как активный модуль находится в `softalign/implicit_model.py`. Практичный запуск из корня репозитория:
+`evaluation.py` импортирует `EventFrameAlignmentModel` через `from implicit_model import ...`, тогда как активный модуль находится в `softalign/implicit_model.py`. Практический запуск из корня репозитория:
 
 ```bash
 PYTHONPATH=softalign python evaluation.py \
@@ -118,35 +163,35 @@ PYTHONPATH=softalign python evaluation.py \
   --output_dir evaluation
 ```
 
-Это генерирует визуализации/метрики, например `evaluation/alignment_visualization.png` и `evaluation/evaluation_results.txt`.
+Это создаёт визуализации/метрики, такие как `evaluation/alignment_visualization.png` и `evaluation/evaluation_results.txt`.
 
 ## 🧪 Использование
 
-### Основной пайплайн (`main.py`)
+### Основной конвейер (`main.py`)
 
 ```bash
 python main.py --help
 ```
 
-Ключевые опции:
-- `--filepath`: путь к входному AEDAT4.
-- `--duration`: сколько секунд читать из записи.
-- `--data_dir`: директория вывода обработанных данных.
-- `--checkpoint_dir`: директория вывода чекпоинтов.
+Ключевые параметры:
+- `--filepath`: путь к входному файлу AEDAT4.
+- `--duration`: продолжительность в секундах для чтения записи.
+- `--data_dir`: каталог для сохранения обработанных данных.
+- `--checkpoint_dir`: каталог для сохранения контрольных точек.
 - `--num_epochs`, `--lr`, `--batch_size`, `--lambda_reg`.
 - `--device`: `cuda` или `cpu`.
-- `--reprocess`: принудительная перегенерация данных.
+- `--reprocess`: принудительная регенерация данных.
 
 ### Экспериментальные скрипты
 
-INR только для events:
+INN только для событий:
 ```bash
 python event_inn.py --aedat4_file yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4 --duration 10 --output_dir output_event
 # или
 python event_inn.py --events_file data/events.npy --output_dir output_event
 ```
 
-INR только для frames:
+INN только для кадров:
 ```bash
 python frame_inn.py --aedat4_file yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4 --duration 10 --output_dir output_frame --grayscale
 # или
@@ -155,25 +200,32 @@ python frame_inn.py --video_file path/to/video.mp4 --output_dir output_frame
 python frame_inn.py --image_dir path/to/images --image_pattern "*.png" --output_dir output_frame
 ```
 
-Варианты на производной:
+Варианты на основе производной:
 ```bash
 python event_deri.py --events_file data/events.npy --output_dir output_deri
 python event_deri_2.py --events_file data/events.npy --output_dir output_deri2
 ```
 
-Sparse-вариант:
+Разреженный вариант:
 ```bash
 python event_inn_sparse.py --events_file data/events.npy --output_dir output_sparse
 ```
 
-Монолитное standalone-выравнивание:
+Монолитное выравнивание:
 ```bash
 python softalign_standalone.py --filepath yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4 --duration 10
 ```
 
-## 🧩 Примечания по конфигурации
+Дополнительные считыватели:
+```bash
+python read_events.py --input yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4
+python read_frames.py --input yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4
+python simple_count.py --input data/events.npy
+```
 
-Значения по умолчанию в основной модели (`softalign/implicit_model.py`):
+## 🧩 Примечания по настройке
+
+Основные параметры модели в `softalign/implicit_model.py`:
 
 | Параметр | Значение по умолчанию |
 |---|---|
@@ -184,39 +236,41 @@ python softalign_standalone.py --filepath yuqing/0.419/dvSave-2025_02_25_01_22_5
 | `threshold` | `0.0` |
 | `dt` | `0.1` |
 
-Предобработка данных в `softalign/data_processing.py` сейчас применяет к events синтетическое смещение перед обучением. Это намеренное поведение текущего кода, и его нужно учитывать при интерпретации метрик.
+На этапе предобработки данных в `softalign/data_processing.py` сейчас к событиям применяется синтетическое рассогласование перед обучением. Это намеренно реализовано в текущей версии кода и должно учитываться при интерпретации метрик.
+
+Скрипты обучения также содержат настраиваемые параметры через флаги CLI (например `--hidden_dim`, `--num_layers` и `--batch_size`), полезные для абляционных экспериментов.
 
 ## 🧠 Математическая формулировка
 
 Общая неявная сеть моделирует `F(x, y, t)`.
 
-Frame-ветка:
-- Непосредственно предсказывает response, похожий на интенсивность, с помощью `F(x, y, t)`.
+Ветвь кадра:
+- Прямое предсказание отклика, похожего на интенсивность, с помощью `F(x, y, t)`.
 
-Event-ветка:
-1. Применение обучаемого преобразования events:
+Ветвь события:
+1. Применить обучаемое преобразование события:
    - `x' = x / scale + shift_x`
    - `y' = y / scale + shift_y`
    - `t' = t + shift_t`
-2. Приближение производной по времени:
+2. Аппроксимировать временную производную:
    - `dF/dt ≈ (F(x', y', t' + dt) - F(x', y', t')) / dt`
-3. Формирование event response:
+3. Сформировать отклик события:
    - `sigmoid(dF/dt - threshold)`
 
-Функция обучения сочетает:
-- Event MSE loss
-- Frame MSE loss
+Целевая функция обучения объединяет:
+- Ошибку MSE для событий
+- Ошибку MSE для кадров
 - Регуляризацию параметров выравнивания
 
 ## 🧾 Примеры
 
-Использование только предобработанных массивов:
+Используйте только предобработанные массивы:
 
 ```bash
 python main.py --data_dir data --checkpoint_dir checkpoints --num_epochs 200 --lr 5e-4
 ```
 
-Принудительный запуск на CPU:
+Форсировать запуск на CPU:
 
 ```bash
 python main.py --device cpu --num_epochs 50 --reprocess
@@ -228,70 +282,52 @@ python main.py --device cpu --num_epochs 50 --reprocess
 PYTHONPATH=softalign python evaluation.py --output_dir evaluation_debug
 ```
 
-## 🛠️ Примечания для разработки
+## 🛠️ Заметки для разработки
 
-- Репозиторий ориентирован на скрипты (метаданных packaging пока нет).
-- В репозитории присутствуют сгенерированные артефакты (checkpoints/results), поэтому использование диска может быть большим.
-- `readme-file.md` и `project-structure.txt` содержат устаревшие предположения о структуре и не полностью соответствуют текущему layout в корне.
-- На данный момент не обнаружено автоматизированных тестов или CI workflows.
+- Репозиторий ориентирован на скрипты (метаданные упаковки пока отсутствуют).
+- Сгенерированные артефакты хранятся внутри репозитория (checkpoints/results), поэтому использование диска может быть значительным.
+- Файлы `readme-file.md` и `project-structure.txt` содержат устаревшие предположения о структуре и не полностью соответствуют текущему корневому макету.
+- На данный момент автоматизированные тесты и CI-конвейеры не обнаружены.
 
 ## 🧯 Устранение неполадок
 
 - `ModuleNotFoundError: No module named 'implicit_model'` в `evaluation.py`:
-  - Запускайте с `PYTHONPATH=softalign`, как показано выше.
-- Проблемы установки/выполнения `dv_processing`:
-  - Убедитесь, что ваша платформа и версия Python поддерживаются wheels/libs для `dv-processing`.
-- CUDA OOM:
-  - Уменьшите `--batch_size`, снизьте `--max_events` (где доступно) или запускайте с `--device cpu`.
+  - Запустите с `PYTHONPATH=softalign`, как показано выше.
+- Проблемы с установкой/выполнением `dv_processing`:
+  - Проверьте, поддерживаются ли ваша платформа и версия Python библиотеками `dv-processing` и зависимостями.
+- Недостаток памяти CUDA:
+  - Уменьшите `--batch_size`, снизьте `--max_events` (если доступен) или запустите с `--device cpu`.
 - Отсутствует файл AEDAT4:
   - Проверьте путь в `yuqing/` или передайте собственную запись через `--filepath` / `--aedat4_file`.
+- Несоответствие данных между запусками:
+  - Повторно запустите с `--reprocess`, если менялись предположения предобработки.
 
-## 🗺️ Дорожная карта
+## 🗺️ План развития
 
 - Добавить воспроизводимые файлы окружения (`requirements.txt` или `pyproject.toml`).
-- Унифицировать import paths для evaluation и запуска в режиме package/module.
-- Добавить автоматизированные тесты для предобработки данных и проверок model forward/training.
+- Унифицировать пути импорта для оценки и пакетного/модульного выполнения.
+- Добавить автоматические тесты для проверки обработки данных, прямого прохода модели и обучения.
 - Добавить CI для линтинга и smoke-тестов.
-- Добавить мультиязычные README-файлы в `i18n/`.
+- Добавить многоязычные README в `i18n/`.
 
 ## 🤝 Вклад
 
 Вклад приветствуется.
 
-1. Сделайте fork репозитория.
-2. Создайте feature-ветку.
-3. Вносите сфокусированные и хорошо задокументированные изменения.
-4. Отправьте pull request с деталями воспроизведения и примерами выходных данных, если это уместно.
-
-Если вы планируете крупные изменения (новый путь обучения, рефакторинг или изменения зависимостей), сначала откройте issue, чтобы согласовать направление.
-
-## 📚 Цитирование
-
-Если вы используете этот репозиторий в исследовании, пожалуйста, цитируйте связанную статью и/или репозиторий.
-
-Текущие метаданные репозитория из существующего текста README:
-- Название статьи: *Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation*
-
-Заглушка BibTeX для репозитория (при необходимости обновите авторов/URL):
-
-```bibtex
-@misc{soft-event-frame-alignment,
-  title        = {Soft Event-Frame Alignment},
-  note         = {Code repository for "Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation"},
-  year         = {2025},
-  howpublished = {GitHub repository}
-}
-```
-
-## 🙏 Благодарности
-
-- Экосистема инструментов для event-камер, включая `dv-processing`.
-- PyTorch и научные Python-библиотеки, используемые в экспериментах.
-
-## 💡 Поддержка
-
-Раздела поддержки/спонсорства в текущих метаданных репозитория нет. Если хотите добавить его, добавьте ссылки в следующем обновлении, и они будут сохранены в будущих ревизиях.
+Рекомендуемый рабочий процесс:
+1. Создайте фокусированный issue или ветку с описанием изменений эксперимента.
+2. Поддерживайте согласованность скриптов (особенно импортов, соглашений CLI и имён директорий вывода).
+3. Сохраняйте поведение существующих артефактов экспериментов, если не меняете схему именования/версионирования.
 
 ## 📄 Лицензия
 
-Проект распространяется по лицензии Apache License 2.0. См. [LICENSE](../LICENSE).
+Этот репозиторий распространяется под лицензией Apache 2.0. Полный текст доступен в [`LICENSE`](../LICENSE).
+
+Предположение: если этот репозиторий используется в публикациях, детали цитирования следует добавить здесь и в примечаниях к релизу по мере необходимости.
+
+
+## ❤️ Support
+
+| Donate | PayPal | Stripe |
+| --- | --- | --- |
+| [![Donate](https://camo.githubusercontent.com/24a4914f0b42c6f435f9e101621f1e52535b02c225764b2f6cc99416926004b7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f446f6e6174652d4c617a79696e674172742d3045413545393f7374796c653d666f722d7468652d6261646765266c6f676f3d6b6f2d6669266c6f676f436f6c6f723d7768697465)](https://chat.lazying.art/donate) | [![PayPal](https://camo.githubusercontent.com/d0f57e8b016517a4b06961b24d0ca87d62fdba16e18bbdb6aba28e978dc0ea21/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50617950616c2d526f6e677a686f754368656e2d3030343537433f7374796c653d666f722d7468652d6261646765266c6f676f3d70617970616c266c6f676f436f6c6f723d7768697465)](https://paypal.me/RongzhouChen) | [![Stripe](https://camo.githubusercontent.com/1152dfe04b6943afe3a8d2953676749603fb9f95e24088c92c97a01a897b4942/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5374726970652d446f6e6174652d3633354246463f7374796c653d666f722d7468652d6261646765266c6f676f3d737472697065266c6f676f436f6c6f723d7768697465)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |

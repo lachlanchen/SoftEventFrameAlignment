@@ -1,15 +1,46 @@
 [English](README.md) · [العربية](i18n/README.ar.md) · [Español](i18n/README.es.md) · [Français](i18n/README.fr.md) · [日本語](i18n/README.ja.md) · [한국어](i18n/README.ko.md) · [Tiếng Việt](i18n/README.vi.md) · [中文 (简体)](i18n/README.zh-Hans.md) · [中文（繁體）](i18n/README.zh-Hant.md) · [Deutsch](i18n/README.de.md) · [Русский](i18n/README.ru.md)
 
 
+[![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
+
 # Soft Event-Frame Alignment
 
 > Repository for the paper **Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation**.
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)
-![CUDA](https://img.shields.io/badge/CUDA-Optional-76B900?logo=nvidia&logoColor=white)
-![Research Code](https://img.shields.io/badge/Type-Research%20Code-0A7EA4)
-![License](https://img.shields.io/badge/License-Apache%202.0-2EA043)
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white&style=flat-square)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white&style=flat-square)
+![CUDA](https://img.shields.io/badge/CUDA-Optional-76B900?logo=nvidia&logoColor=white&style=flat-square)
+![Research Code](https://img.shields.io/badge/Type-Research%20Code-0A7EA4?style=flat-square)
+![License](https://img.shields.io/badge/License-Apache%202.0-2EA043?style=flat-square)
+
+| Focus | Details |
+| --- | --- |
+| 🎯 Goal | Align event-camera streams and frame-camera streams with a unified implicit neural representation |
+| ⚙️ Main Pipeline | `main.py` (train) + `evaluation.py` (analyze/visualize) |
+| 🧪 Variant Scripts | `event_inn.py`, `frame_inn.py`, `event_deri*.py`, `event_inn_sparse.py` |
+
+</div>
+
+## Table of Contents
+
+- [🔎 Overview](#-overview)
+- [✨ Features](#-features)
+- [🗂️ Project Structure](#-project-structure)
+- [📋 Prerequisites](#-prerequisites)
+- [⚙️ Installation](#-installation)
+- [🚀 Quick Start](#-quick-start)
+- [🧪 Usage](#-usage)
+- [🧩 Configuration Notes](#-configuration-notes)
+- [🧠 Mathematical Formulation](#-mathematical-formulation)
+- [🧾 Examples](#-examples)
+- [🛠️ Development Notes](#-development-notes)
+- [🧯 Troubleshooting](#-troubleshooting)
+- [🗺️ Roadmap](#-roadmap)
+- [🤝 Contributing](#-contributing)
+- [❤️ Support](#-support)
+- [📄 License](#-license)
 
 ## 🔎 Overview
 
@@ -34,6 +65,10 @@ In addition to the main path, the repository includes standalone and experimenta
 - AEDAT4 ingestion (`dv_processing`) plus processed `.npy` workflows.
 - Built-in visualization outputs for loss curves, parameter evolution, and alignment overlays.
 - CUDA support when available (`torch.cuda.is_available()` fallback to CPU).
+- Dataset scripts for quick data inspection and lightweight debugging:
+  - `read_events.py`
+  - `read_frames.py`
+  - `reader.py`, `reader_norm.py`, `simple_count.py`
 
 ## 🗂️ Project Structure
 
@@ -41,27 +76,35 @@ In addition to the main path, the repository includes standalone and experimenta
 SoftEventFrameAlignment/
 ├── README.md
 ├── LICENSE
-├── main.py                          # Canonical event-frame training entrypoint
-├── evaluation.py                    # Canonical evaluation/visualization entrypoint
+├── main.py                              # Canonical event-frame training entrypoint
+├── evaluation.py                        # Canonical evaluation/visualization entrypoint
 ├── softalign/
 │   ├── __init__.py
-│   ├── data_processing.py           # AEDAT4 loading + normalization + frame point sampling
-│   ├── implicit_model.py            # MLP + alignment parameters
-│   └── training.py                  # Dataset wrapper + optimization loop
-├── event_inn.py                     # Event-only INR experiment
-├── frame_inn.py                     # Frame-only INR experiment
-├── event_deri.py                    # Derivative/log-derivative event variant
-├── event_deri_2.py                  # Derivative variant with extra zero regularization
-├── event_inn_sparse.py              # Sparse event INR (PyG/torch_scatter dependencies)
-├── softalign_standalone.py          # Monolithic all-in-one alignment workflow
-├── data/                            # Processed arrays (generated or checked in)
-├── checkpoints/                     # Main training checkpoints and plots
-├── event_inn_results/               # Generated experiment outputs
-├── frame_inn_results/               # Generated experiment outputs
-├── event_drivative_results/         # Generated experiment outputs
-├── alignment_results_*/             # Timestamped alignment runs
-├── yuqing/                          # Sample AEDAT4 files
-└── i18n/                            # Translation files target location
+│   ├── data_processing.py               # AEDAT4 loading + normalization + frame point sampling
+│   ├── implicit_model.py                # MLP + alignment parameters
+│   └── training.py                      # Dataset wrapper + optimization loop
+├── event_inn.py                         # Event-only INR experiment
+├── frame_inn.py                         # Frame-only INR experiment
+├── event_deri.py                        # Derivative/log-derivative event variant
+├── event_deri_2.py                      # Derivative variant with extra zero regularization
+├── event_inn_sparse.py                  # Sparse event INR (PyG/torch_scatter dependencies)
+├── softalign_standalone.py              # Monolithic all-in-one alignment workflow
+├── softalign_old.py                     # Legacy implementation retained for comparison
+├── read_events.py                       # Event I/O and basic preprocessing checks
+├── read_frames.py                       # Frame/video extraction and shape checks
+├── reader.py                            # AEDAT reader utility
+├── reader_norm.py                       # Reader with normalization helpers
+├── simple_count.py                      # Lightweight event-count utility
+├── data/                                # Processed arrays (generated or checked in)
+├── checkpoints/                         # Main training checkpoints and plots
+├── event_inn_results/                   # Generated experiment outputs
+├── frame_inn_results/                   # Generated experiment outputs
+├── event_drivative_results/             # Generated experiment outputs
+├── alignment_results_*/                 # Timestamped alignment runs
+├── yuqing/                              # Sample AEDAT4 files
+├── events_processed.csv                  # Event summary artifact
+├── frames_processed.csv                  # Frame summary artifact
+└── i18n/                                # Translated README files
 ```
 
 ## 📋 Prerequisites
@@ -89,6 +132,8 @@ Optional dependencies for sparse experiments (`event_inn_sparse.py`):
 ```bash
 pip install scikit-learn torch-geometric torch-scatter
 ```
+
+Assumption: CUDA availability determines the default device behavior, but all commands below also support explicit `--device cpu`.
 
 ## 🚀 Quick Start
 
@@ -171,6 +216,13 @@ Standalone monolithic alignment:
 python softalign_standalone.py --filepath yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4 --duration 10
 ```
 
+Additional readers:
+```bash
+python read_events.py --input yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4
+python read_frames.py --input yuqing/0.419/dvSave-2025_02_25_01_22_55.aedat4
+python simple_count.py --input data/events.npy
+```
+
 ## 🧩 Configuration Notes
 
 Main model defaults in `softalign/implicit_model.py`:
@@ -185,6 +237,8 @@ Main model defaults in `softalign/implicit_model.py`:
 | `dt` | `0.1` |
 
 Data preprocessing in `softalign/data_processing.py` currently applies a synthetic misalignment to events before training. This is intentional in current code and should be considered when interpreting metrics.
+
+Training scripts also expose tunable knobs through CLI flags (for example `--hidden_dim`, `--num_layers`, and `--batch_size`) that are useful for ablations.
 
 ## 🧠 Mathematical Formulation
 
@@ -245,6 +299,8 @@ PYTHONPATH=softalign python evaluation.py --output_dir evaluation_debug
   - Lower `--batch_size`, reduce `--max_events` (where available), or run with `--device cpu`.
 - Missing AEDAT4 file:
   - Verify path under `yuqing/` or provide your own recording via `--filepath` / `--aedat4_file`.
+- Data mismatch between runs:
+  - Re-run with `--reprocess` when changing preprocessing assumptions.
 
 ## 🗺️ Roadmap
 
@@ -258,40 +314,19 @@ PYTHONPATH=softalign python evaluation.py --output_dir evaluation_debug
 
 Contributions are welcome.
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Make focused, well-documented changes.
-4. Submit a pull request with reproduction details and sample outputs when relevant.
+Recommended workflow:
+1. Create a focused issue or branch summarizing the experiment change.
+2. Keep scripts aligned (especially imports, CLI conventions, and output directory names).
+3. Preserve existing experiment artifacts behavior unless changing naming/versioning.
 
-If you plan large changes (new training path, refactor, or dependency changes), open an issue first to align direction.
+## ❤️ Support
 
-## 📚 Citation
-
-If you use this repository in research, cite the related paper and/or repository.
-
-Current repository metadata available from the existing README text:
-- Paper title: *Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation*
-
-A repository BibTeX placeholder (update authors/URL as needed):
-
-```bibtex
-@misc{soft-event-frame-alignment,
-  title        = {Soft Event-Frame Alignment},
-  note         = {Code repository for "Soft Alignment of Event and Frame Data with Unified Implicit Neural Representation"},
-  year         = {2025},
-  howpublished = {GitHub repository}
-}
-```
-
-## 🙏 Acknowledgements
-
-- Event-camera tooling ecosystem, including `dv-processing`.
-- PyTorch and scientific Python libraries used across the experiments.
-
-## 💡 Support
-
-Support/sponsorship section is not present in current repository metadata. If you want one, add links in a follow-up update and they will be preserved in future revisions.
+| Donate | PayPal | Stripe |
+| --- | --- | --- |
+| [![Donate](https://camo.githubusercontent.com/24a4914f0b42c6f435f9e101621f1e52535b02c225764b2f6cc99416926004b7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f446f6e6174652d4c617a79696e674172742d3045413545393f7374796c653d666f722d7468652d6261646765266c6f676f3d6b6f2d6669266c6f676f436f6c6f723d7768697465)](https://chat.lazying.art/donate) | [![PayPal](https://camo.githubusercontent.com/d0f57e8b016517a4b06961b24d0ca87d62fdba16e18bbdb6aba28e978dc0ea21/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50617950616c2d526f6e677a686f754368656e2d3030343537433f7374796c653d666f722d7468652d6261646765266c6f676f3d70617970616c266c6f676f436f6c6f723d7768697465)](https://paypal.me/RongzhouChen) | [![Stripe](https://camo.githubusercontent.com/1152dfe04b6943afe3a8d2953676749603fb9f95e24088c92c97a01a897b4942/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5374726970652d446f6e6174652d3633354246463f7374796c653d666f722d7468652d6261646765266c6f676f3d737472697065266c6f676f436f6c6f723d7768697465)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ## 📄 License
 
-Licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+This repository is released under the Apache License 2.0. See [`LICENSE`](LICENSE) for the full text.
+
+Assumption: if this repository is used in publications, citation details should be added here and in release notes as needed.
