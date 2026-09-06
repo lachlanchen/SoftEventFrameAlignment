@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use Soft Event-Frame Alignment, please cite this repository."
+type: software
+title: "Soft Event-Frame Alignment: Unified Implicit Neural Representation Research Code"
+version: 0.1.0
+date-released: 2026-09-07
+abstract: "A minimal research implementation for learning a soft spatial and temporal alignment between event-camera and frame-camera samples with a shared implicit neural representation."
+authors:
+  - family-names: Chen
+    given-names: Lachlan
+    alias: lachlanchen
+repository-code: "https://github.com/lachlanchen/SoftEventFrameAlignment"
+url: "https://github.com/lachlanchen/SoftEventFrameAlignment"
+license: Apache-2.0
+keywords:
+  - event camera
+  - implicit neural representation
+  - sensor alignment
+  - multimodal learning
+  - research code

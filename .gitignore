@@ -167,5 +167,42 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Local research recordings, derived arrays, checkpoints, and visual outputs.
+# These are intentionally excluded from the public minimal-code release.
+*.aedat4
+*.npy
+*.pt
+alignment_results_*/
+checkpoints/
+data/
+evaluation/
+event_drivative_results/
+event_inn_results/
+frame_inn_results/
+yuqing/
+.smoke-output/
+events_processed.csv
+frames_processed.csv
+first_frame.png
+esports_data
+
+# Local README-generation and research workbench files.
+.auto-readme-work/
+project-structure.txt
+readme-file.md
+repository_concatenated.txt
+event_deri.py
+event_deri_2.py
+event_inn.py
+event_inn_sparse.py
+frame_inn.py
+read_events.py
+read_frames.py
+reader.py
+reader_norm.py
+simple_count.py
+softalign_old.py
+softalign_standalone.py
+
 # PyPI configuration file
 .pypirc

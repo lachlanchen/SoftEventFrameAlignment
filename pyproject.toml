@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soft-event-frame-alignment"
+version = "0.1.0"
+description = "Minimal research code for soft event-frame alignment with a unified implicit neural representation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "Lachlan Chen"}]
+dependencies = [
+  "numpy>=1.26,<3",
+  "torch>=2.3,<3",
+]
+
+[project.optional-dependencies]
+aedat = [
+  "dv-processing>=1.7,<2",
+  "opencv-python-headless>=4.9,<5",
+]
+viz = [
+  "matplotlib>=3.8,<4",
+  "scipy>=1.11,<2",
+  "opencv-python-headless>=4.9,<5",
+]
+test = ["pytest>=8,<10"]
+
+[project.urls]
+Repository = "https://github.com/lachlanchen/SoftEventFrameAlignment"
+Issues = "https://github.com/lachlanchen/SoftEventFrameAlignment/issues"
+
+[tool.setuptools]
+py-modules = ["main", "evaluation"]
+
+[tool.setuptools.packages.find]
+include = ["softalign*"]
